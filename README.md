@@ -1,113 +1,66 @@
 # Retro Phone Simulator
 
-An original classic feature-phone simulator inspired by the look and feel of early monochrome mobile phones. Vanilla JS + Vite, packaged for Android with Capacitor. No Nokia logos, firmware, icons or sounds are used; all visuals and sounds are generated in code.
+A classic feature phone on your Android screen. Green monochrome display, a real keypad, text messages typed with multi-tap, contacts, a call log, Snake and more. It works fully offline and needs no account.
 
-## Features
+![Retro Phone Simulator screenshots](docs/screenshot.png)
 
-- Phone body, monochrome LCD with pixel grid and glow, 21-key keypad, press animation, vibration, generated beep sounds
-- Home screen: signal, battery, operator, time, date, unread-message and alarm icons
-- 11-item menu with Up/Down, OK, soft keys, Back, End (number keys 1-9 jump to an item)
-- Messages (inbox, sent, drafts, multi-tap typing), Contacts (add, edit, delete, search, call, message)
-- Simulated calls (dial, calling, incoming, missed) and call log
-- Games (Snake, Reaction test) with high scores, Calculator, Clock (stopwatch, timer), Alarm, Calendar
-- Settings (display, 3 themes, sound, vibration, 12/24h, language, reset) and Profiles
-- All data kept in LocalStorage; corrupt data is recovered with defaults; works offline
+## What you can do
 
-## Controls
+- **Messages**: write with the old-style multi-tap keypad (press 2 once for A, twice for B), keep drafts, read inbox and sent
+- **Contacts**: add, edit, delete, search, call or message a contact
+- **Calls**: dial a number, see the calling screen, try incoming and missed calls, browse the call log
+- **Games**: Snake and a Reaction test, both with saved high scores
+- **Tools**: Calculator, Clock with stopwatch and countdown timer, Alarm, Calendar
+- **Settings**: 3 colour themes (Classic Green, Monochrome, Dark Retro), sound and vibration, 12 or 24 hour time, Profiles (General, Silent, Vibrate only)
+- **Remembers everything**: contacts, messages, call log, alarms, settings and high scores stay after you close the app
 
-| Key | Action |
+Calls and messages are simulations. The app never calls or texts anyone and never asks for your real contacts.
+
+## Download and install (Android)
+
+1. Open the [latest release](../../releases/latest) in your phone browser.
+2. Under **Assets**, tap the file ending in **.apk** to download it.
+3. Open the downloaded file. If Android says installing from this source is blocked, tap **Settings**, allow it for your browser or file manager, then go back and tap **Install**.
+4. If Play Protect shows a warning, tap **More details** and then **Install anyway**. The app is not on the Play Store, which is why the warning appears.
+5. Open **Retro Phone Simulator** from your app list.
+
+To update, download the newest APK and install it over the old one. Your data stays.
+
+### বাংলায় ইনস্টল
+
+1. ফোনের ব্রাউজারে [সর্বশেষ release](../../releases/latest) খুলুন।
+2. **Assets**-এর নিচে **.apk** দিয়ে শেষ হওয়া ফাইলে ট্যাপ করে ডাউনলোড করুন।
+3. ডাউনলোড হওয়া ফাইল খুলুন। Android বাধা দিলে **Settings** চেপে ব্রাউজার বা ফাইল ম্যানেজারের জন্য অনুমতি দিন, তারপর **Install** চাপুন।
+4. Play Protect সতর্কতা দিলে **More details** চেপে **Install anyway** দিন।
+5. অ্যাপ লিস্ট থেকে **Retro Phone Simulator** খুলুন।
+
+## How to use it
+
+| Key | What it does |
 |---|---|
-| Soft keys | Label shown at the bottom of the screen |
-| Up / Down / Left / Right, OK | Navigate and select |
-| End | Back to home screen |
-| Call | Open dialled numbers (home), accept call |
-| `#` in text entry | Cycle Abc / abc / ABC / 123 |
-| Keyboard | Arrows, Enter = OK, Esc/Backspace = back, 0-9 `*` `#`, F1/Q = left soft, F2/W = right soft, C = call, E/End = end |
+| Left / right soft key (top row) | Does what the label at the bottom of the screen says |
+| Arrow keys and the square middle key | Move and select (square = OK) |
+| Number keys | Type, dial, or jump to menu items 1 to 9 |
+| `#` while typing | Switch between Abc, abc, ABC and 123 |
+| CALL | Dialled numbers on the home screen, accept an incoming call |
+| END | Back to the home screen from anywhere |
+| Android Back button | Go back one screen, exit from the home screen |
 
-Android hardware Back button goes back one screen and exits at the home screen.
+Press any number on the home screen to start dialling. Press the left soft key (**Menu**) to see everything the phone can do.
 
-## Project structure
+**Try a call or message:** Menu, Call Log, **Simulate incoming**. For a message: Menu, Messages, **Simulate incoming**.
 
-```
-nokia-simulator/
-├── src/            index.html, css/, js/ (one module per feature)
-├── public/         favicon
-├── resources/      Android launcher icons (applied in CI)
-├── scripts/        patch-android.mjs (vibration permission, portrait lock, icons)
-├── .github/workflows/android-build.yml
-├── capacitor.config.json, package.json, vite.config.js
-```
+## Good to know
 
-## Development
+- Alarms and the timer ring only while the app is open. Android pauses apps in the background.
+- English only for now.
+- To erase everything: Menu, Settings, **Reset app**.
+- Privacy: the app does not collect or send any data. Everything stays on your phone.
 
-```
-npm install
-npm run dev        # http://localhost:5173
-npm run build      # output in dist/
-npm run preview
-```
+## For developers
 
-## Termux (phone only, no PC)
+Build, Termux and GitHub Actions instructions are in [DEVELOPING.md](DEVELOPING.md).
 
-```
-pkg update
-pkg upgrade
-pkg install git nodejs unzip
-unzip nokia-simulator-phase6.zip
-cd nokia-simulator
-npm install
-npm run dev
-```
+---
 
-Open `http://localhost:5173` in the phone browser. `npm run build` also works in Termux.
-
-**Do not run in Termux:** `npx cap add android`, `npx cap sync android` and `./gradlew`. They need the Android SDK and Java, which Termux does not have. GitHub Actions does these steps.
-
-## Push to GitHub
-
-Create an empty repository on github.com first, then:
-
-```
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-git init -b main
-git add .
-git commit -m "Retro Phone Simulator"
-git remote add origin https://github.com/USERNAME/REPO.git
-git push -u origin main
-```
-
-GitHub asks for a username and a password: use a Personal Access Token (Settings, Developer settings, Personal access tokens) as the password. Alternatively `pkg install gh` and `gh auth login`.
-
-## GitHub Actions and APK
-
-Every push to `main` runs `.github/workflows/android-build.yml`:
-
-1. Node 20 and JDK 17 setup
-2. `npm install`, `npm run build`
-3. `npx cap add android` (the `android/` folder is generated in CI)
-4. `scripts/patch-android.mjs` adds the VIBRATE permission, portrait lock and icons
-5. `npx cap sync android`, then `./gradlew assembleDebug`
-6. Uploads `app-debug.apk` as an artifact
-
-To get the APK: GitHub repository, **Actions** tab, open the latest run, scroll to **Artifacts**, download `retro-phone-simulator-debug-apk` (a zip), extract it and install `app-debug.apk`. Allow "Install unknown apps" for your browser or file manager.
-
-You can also start a build manually from Actions, **Android Build**, **Run workflow**.
-
-## Limitations
-
-- Alarms and the countdown timer ring only while the app is open. Android pauses web apps in the background.
-- Calls and SMS are simulations. No real calling, SMS or contacts permission is used.
-- Language: English only.
-
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| `npm install` fails in Termux | `pkg upgrade`, then `rm -rf node_modules` and retry; check free storage |
-| Blank page in browser | Run `npm run dev` and open the shown URL; do not open `index.html` as a file |
-| Workflow fails at `npm run build` | Open the failed step log; the first red error line shows the file |
-| Workflow fails at Gradle | Re-run the job; if it repeats, copy the first `error:` line from the log |
-| No Artifacts section | The run must be green; open the run page, not the repository front page |
-| APK will not install | Enable installing from unknown sources; uninstall an older copy first |
-| Data looks wrong | Settings, Reset app |
+Retro Phone Simulator is an original design inspired by early feature phones. It is not affiliated with or endorsed by Nokia or any phone maker, and it contains no logos, fonts, sounds or software from them.

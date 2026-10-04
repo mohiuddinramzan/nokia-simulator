@@ -3,8 +3,16 @@ name: Android Build
 on:
   push:
     branches: [main, master]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-debug-apk:
@@ -43,9 +51,38 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK
+      - name: Name the APK
+        id: apk
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="$GITHUB_REF_NAME"
+          else
+            TAG="v$(node -p "require('./package.json').version")"
+          fi
+          FILE="retro-phone-simulator-${TAG}.apk"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "$FILE"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "file=$FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: retro-phone-simulator-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: retro-phone-simulator-apk
+          path: ${{ steps.apk.outputs.file }}
           if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.apk.outputs.tag }}
+          FILE: ${{ steps.apk.outputs.file }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$FILE" --clobber
+          else
+            gh release create "$TAG" "$FILE" \
+              --target "$GITHUB_SHA" \
+              --title "Retro Phone Simulator $TAG" \
+              --notes "Download the APK below and install it on your Android phone. Installation steps are in the README."
+          fi
