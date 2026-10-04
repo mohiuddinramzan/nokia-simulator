@@ -1,0 +1,34 @@
+.key {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35em;
+  height: 3.1em;
+  color: var(--key-ink);
+  background: var(--key);
+  border-radius: 1.6em / 1.3em;
+  box-shadow: 0 .22em 0 var(--key-shadow);
+}
+.key.soft, .key.nav { background: var(--key-soft); }
+.key.pressed {
+  transform: translateY(.18em);
+  box-shadow: 0 .04em 0 var(--key-shadow);
+  filter: brightness(.9);
+}
+.key:focus-visible { outline: .18em solid #ffd24a; outline-offset: .12em; }
+
+.k-num { font-size: 1.5em; font-weight: 700; line-height: 1; }
+.k-let { font-size: .62em; font-weight: 700; letter-spacing: .06em; }
+.k-txt { font-size: .9em; font-weight: 700; letter-spacing: .08em; }
+.key.call .k-txt { color: #17702a; }
+.key.end .k-txt { color: #b3261e; }
+
+.glyph { display: block; }
+.glyph-up, .glyph-down, .glyph-left, .glyph-right { width: 0; height: 0; border: .6em solid transparent; }
+.glyph-up { border-top: 0; border-bottom: .85em solid currentColor; }
+.glyph-down { border-bottom: 0; border-top: .85em solid currentColor; }
+.glyph-left { border-left: 0; border-right: .85em solid currentColor; }
+.glyph-right { border-right: 0; border-left: .85em solid currentColor; }
+.glyph-dot { width: .9em; height: .9em; background: currentColor; border-radius: .2em; }
+.glyph-bar { width: 1.4em; height: .3em; background: currentColor; border-radius: .15em; }

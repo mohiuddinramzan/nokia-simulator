@@ -1,0 +1,6 @@
+{
+  "appId": "com.retrophone.simulator",
+  "appName": "Retro Phone Simulator",
+  "webDir": "dist",
+  "backgroundColor": "#0e1114"
+}
