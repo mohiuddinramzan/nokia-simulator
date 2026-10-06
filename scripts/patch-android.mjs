@@ -10,7 +10,7 @@ if (!existsSync(manifestPath)) {
 }
 
 let manifest = readFileSync(manifestPath, 'utf8');
-const permissions = ['VIBRATE', 'CALL_PHONE', 'SEND_SMS', 'READ_SMS'];
+const permissions = ['VIBRATE', 'CALL_PHONE', 'SEND_SMS'];
 permissions.forEach((name) => {
   if (manifest.includes(`android.permission.${name}"`)) return;
   manifest = manifest.replace('</manifest>', `    <uses-permission android:name="android.permission.${name}" />\n</manifest>`);

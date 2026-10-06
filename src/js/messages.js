@@ -3,7 +3,7 @@ import { navigate, back, notify, render } from './router.js';
 import { makeListScreen, makeInfoScreen, openOptions, openEditor, confirmAction } from './screens.js';
 import { fmtDate, fmtTime } from './navigation.js';
 import { startCall } from './calls.js';
-import { isReal, realSms, readPhoneSms, noteError } from './phone.js';
+import { isReal, realSms, noteError } from './phone.js';
 
 const BOX_TITLES = { inbox: 'Inbox', sent: 'Sent', drafts: 'Drafts' };
 const SAMPLES = ['Hello! How are you?', 'Call me when you are free.', 'Meeting at 5 pm today.', 'Happy birthday!', 'Where are you? I am waiting.'];
@@ -32,37 +32,6 @@ function send(text, number, draftId) {
     notify('Send failed');
     render();
   });
-}
-
-async function importFromPhone() {
-  notify('Importing...');
-  try {
-    const known = new Set(load('messages').map((m) => m.sysId).filter(Boolean));
-    let added = 0;
-    for (const box of ['inbox', 'sent']) {
-      const list = await readPhoneSms(box, 50);
-      list.forEach((m) => {
-        const sysId = `${box}:${m.id}`;
-        if (known.has(sysId)) return;
-        known.add(sysId);
-        addItem('messages', {
-          box,
-          sysId,
-          number: String(m.address || ''),
-          body: String(m.body || ''),
-          ts: Number(m.date) || Date.now(),
-          read: box === 'sent' || Number(m.read) === 1,
-        });
-        added += 1;
-      });
-    }
-    notify(`Imported ${added}`);
-  } catch (err) {
-    console.error('[messages] import failed', err);
-    noteError(err);
-    notify('Import failed');
-  }
-  render();
 }
 
 function saveDraft(text, number, draftId) {
@@ -136,9 +105,7 @@ export const messageMenuParams = () => ({
       { label: 'Sent', keep: true, run: () => navigate('messagelist', { box: 'sent' }) },
       { label: 'Drafts', keep: true, run: () => navigate('messagelist', { box: 'drafts' }) },
       { label: 'Write message', keep: true, run: () => compose() },
-      isReal()
-        ? { label: 'Import from phone', keep: true, run: importFromPhone }
-        : { label: 'Simulate incoming', keep: true, run: simulateSms },
+      ...(isReal() ? [] : [{ label: 'Simulate incoming', keep: true, run: simulateSms }]),
     ];
   },
 });

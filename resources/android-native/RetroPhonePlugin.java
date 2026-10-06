@@ -2,12 +2,10 @@ package __PACKAGE__;
 
 import android.Manifest;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.SmsManager;
 
-import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PermissionState;
 import com.getcapacitor.Plugin;
@@ -23,8 +21,7 @@ import java.util.ArrayList;
     name = "RetroPhone",
     permissions = {
         @Permission(alias = "call", strings = { Manifest.permission.CALL_PHONE }),
-        @Permission(alias = "sendSms", strings = { Manifest.permission.SEND_SMS }),
-        @Permission(alias = "readSms", strings = { Manifest.permission.READ_SMS })
+        @Permission(alias = "sendSms", strings = { Manifest.permission.SEND_SMS })
     }
 )
 public class RetroPhonePlugin extends Plugin {
@@ -98,48 +95,5 @@ public class RetroPhonePlugin extends Plugin {
         } catch (Exception e) {
             call.reject("send failed: " + e.getMessage());
         }
-    }
-
-    @PluginMethod
-    public void listSms(PluginCall call) {
-        if (getPermissionState("readSms") != PermissionState.GRANTED) {
-            requestPermissionForAlias("readSms", call, "readSmsPermissionResult");
-            return;
-        }
-        readSms(call);
-    }
-
-    @PermissionCallback
-    private void readSmsPermissionResult(PluginCall call) {
-        if (getPermissionState("readSms") == PermissionState.GRANTED) {
-            readSms(call);
-        } else {
-            call.reject("SMS read permission denied");
-        }
-    }
-
-    private void readSms(PluginCall call) {
-        String box = "sent".equals(call.getString("box")) ? "sent" : "inbox";
-        int limit = Math.min(200, Math.max(1, call.getInt("limit", 50)));
-        JSArray messages = new JSArray();
-        Uri uri = Uri.parse("content://sms/" + box);
-        String[] columns = { "_id", "address", "body", "date", "read" };
-        try (Cursor cursor = getContext().getContentResolver().query(uri, columns, null, null, "date DESC")) {
-            while (cursor != null && cursor.moveToNext() && messages.length() < limit) {
-                JSObject item = new JSObject();
-                item.put("id", cursor.getString(0));
-                item.put("address", cursor.getString(1));
-                item.put("body", cursor.getString(2));
-                item.put("date", cursor.getLong(3));
-                item.put("read", cursor.getInt(4));
-                messages.put(item);
-            }
-        } catch (Exception e) {
-            call.reject("read failed: " + e.getMessage());
-            return;
-        }
-        JSObject result = new JSObject();
-        result.put("messages", messages);
-        call.resolve(result);
     }
 }

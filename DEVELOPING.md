@@ -59,7 +59,7 @@ This creates release `v1.1.0` with the new APK. Pull requests only build; they d
 
 ## Native plugin (real calls and SMS)
 
-`resources/android-native/` holds `RetroPhonePlugin.java` (call, sendSms, listSms, permissions) and `MainActivity.java`. `scripts/patch-android.mjs` copies them into the generated Android project (replacing `__PACKAGE__` with the appId) and adds the CALL_PHONE, SEND_SMS and READ_SMS permissions. The web side is `src/js/phone.js`; it is used only when `Capacitor.isNativePlatform()` and the `realMode` setting is on. The plugin is not testable in the browser, only on a device.
+`resources/android-native/` holds `RetroPhonePlugin.java` (call, sendSms, permissions) and `MainActivity.java`. `scripts/patch-android.mjs` copies them into the generated Android project (replacing `__PACKAGE__` with the appId) and adds the CALL_PHONE and SEND_SMS permissions. The web side is `src/js/phone.js`; it is used only when `Capacitor.isNativePlatform()` and the `realMode` setting is on. The plugin is not testable in the browser, only on a device.
 
 ## Repository About and topics (GitHub CLI)
 

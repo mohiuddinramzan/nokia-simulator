@@ -72,7 +72,6 @@ export const phoneStatusScreen = makeInfoScreen({
       `Plugin: ${status.plugin}`,
       `Call: ${status.call}`,
       `SMS send: ${status.sendSms}`,
-      `SMS read: ${status.readSms}`,
     ];
     const error = getLastError();
     return error ? [...rows, `Error: ${error}`] : rows;

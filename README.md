@@ -22,13 +22,12 @@ Menu, Settings, **Real mode**, then confirm. Android asks for permission to make
 
 - Calls: dialling a number places a real phone call using your SIM. The normal phone call screen opens.
 - SMS: messages you send go out as real text messages. Your carrier's SMS charges apply.
-- **Import from phone** (Menu, Messages) copies your latest 50 received and 50 sent texts into the app.
 - If a permission is denied, calls open the phone dialer instead and sending shows "Send failed" and keeps the text in Drafts.
 - Turn Real mode off at any time to go back to the simulation.
 
 **If Android will not show the SMS permission** (Android 13 and newer, apps installed from a file): open Android Settings, Apps, Retro Phone Simulator, tap the three dots at the top right and choose **Allow restricted settings**. Then turn Real mode on again.
 
-Real mode works inside the app only. Incoming real calls and texts are not shown yet.
+Real mode works inside the app only. The app does not read your existing texts, and incoming real calls and texts are not shown.
 
 ## Download and install (Android)
 
@@ -70,7 +69,7 @@ Press any number on the home screen to start dialling. Press the left soft key (
 - English only for now.
 - Incoming real calls and SMS are not shown yet.
 - To erase everything: Menu, Settings, **Reset app**.
-- Privacy: the app does not collect or send any data. Everything stays on your phone. In Real mode the app only uses the call, send SMS and read SMS permissions you allow.
+- Privacy: the app does not collect or send any data. Everything stays on your phone. In Real mode the app only uses the call and send SMS permissions you allow.
 
 ## For developers
 
