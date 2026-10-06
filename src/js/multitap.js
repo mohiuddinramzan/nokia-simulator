@@ -1,10 +1,16 @@
 import { escapeHtml } from './navigation.js';
+import { isBengali } from './i18n.js';
 
 const KEYS = {
   1: ".,?!'-@1", 2: 'abc2', 3: 'def3', 4: 'ghi4', 5: 'jkl5',
   6: 'mno6', 7: 'pqrs7', 8: 'tuv8', 9: 'wxyz9', 0: ' 0',
 };
-const MODES = ['Abc', 'abc', 'ABC', '123'];
+const KEYS_BN = {
+  1: '।,?!\'-@1', 2: 'অআইঈউঊঋএঐওঔ', 3: 'ািীুূৃেৈোৌ', 4: 'কখগঘঙ', 5: 'চছজঝঞ',
+  6: 'টঠডঢণ', 7: 'তথদধন', 8: 'পফবভম', 9: 'যরলশষসহ', 0: ' ্0', '*': 'ংঃঁৎড়ঢ়য়',
+};
+const BN_MODE = 'বাং';
+const MODES = ['Abc', 'abc', 'ABC', '123', BN_MODE];
 const PENDING_MS = 900;
 
 export function createTyper({ initial = '', max = 160, numeric = false, onChange = () => {} } = {}) {
@@ -13,9 +19,10 @@ export function createTyper({ initial = '', max = 160, numeric = false, onChange
   let lastKey = null;
   let index = 0;
   let timer = null;
-  let mode = numeric ? '123' : 'Abc';
+  let mode = numeric ? '123' : isBengali() ? BN_MODE : 'Abc';
 
   const casing = (ch) => {
+    if (mode === BN_MODE) return ch;
     if (mode === 'ABC') return ch.toUpperCase();
     if (mode === 'Abc' && (text === '' || /[.!?]\s+$/.test(text))) return ch.toUpperCase();
     return ch.toLowerCase();
@@ -44,7 +51,7 @@ export function createTyper({ initial = '', max = 160, numeric = false, onChange
       onChange();
       return true;
     }
-    const chars = KEYS[key];
+    const chars = (mode === BN_MODE ? KEYS_BN : KEYS)[key];
     if (!chars) return false;
     if (key === lastKey && pending) {
       index = (index + 1) % chars.length;

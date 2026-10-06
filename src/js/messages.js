@@ -3,13 +3,14 @@ import { navigate, back, notify, render } from './router.js';
 import { makeListScreen, makeInfoScreen, openOptions, openEditor, confirmAction } from './screens.js';
 import { fmtDate, fmtTime } from './navigation.js';
 import { startCall } from './calls.js';
+import { t } from './i18n.js';
 import { isReal, realSms, noteError } from './phone.js';
 
 const BOX_TITLES = { inbox: 'Inbox', sent: 'Sent', drafts: 'Drafts' };
 const SAMPLES = ['Hello! How are you?', 'Call me when you are free.', 'Meeting at 5 pm today.', 'Happy birthday!', 'Where are you? I am waiting.'];
 
 const body = (m) => String(m.body || '');
-const who = (m) => (m.number ? contactName(m.number) || m.number : '(no number)');
+const who = (m) => (m.number ? contactName(m.number) || m.number : t('(no number)'));
 const findMessage = (id) => load('messages').find((m) => m.id === id);
 
 function deliver(text, number, draftId) {
@@ -71,7 +72,7 @@ export function simulateSms() {
   addItem('messages', {
     box: 'inbox',
     number: randomCaller(),
-    body: SAMPLES[Math.floor(Math.random() * SAMPLES.length)],
+    body: t(SAMPLES[Math.floor(Math.random() * SAMPLES.length)]),
     ts: Date.now(),
     read: false,
   });
@@ -101,7 +102,7 @@ export const messageMenuParams = () => ({
   items: () => {
     const unread = load('messages').filter((m) => m.box === 'inbox' && !m.read).length;
     return [
-      { label: unread ? `Inbox (${unread})` : 'Inbox', keep: true, run: () => navigate('messagelist', { box: 'inbox' }) },
+      { label: unread ? t('Inbox ({n})', { n: unread }) : 'Inbox', keep: true, run: () => navigate('messagelist', { box: 'inbox' }) },
       { label: 'Sent', keep: true, run: () => navigate('messagelist', { box: 'sent' }) },
       { label: 'Drafts', keep: true, run: () => navigate('messagelist', { box: 'drafts' }) },
       { label: 'Write message', keep: true, run: () => compose() },
@@ -123,8 +124,8 @@ export const messageScreen = makeInfoScreen({
   title: ({ id }) => BOX_TITLES[(findMessage(id) || {}).box] || 'Message',
   lines: ({ id }) => {
     const m = findMessage(id);
-    if (!m) return ['Not found'];
-    return [`${m.box === 'inbox' ? 'From' : 'To'}: ${who(m)}`, body(m), '', `${fmtDate(m.ts)} ${fmtTime(m.ts)}`];
+    if (!m) return [t('Not found')];
+    return [`${t(m.box === 'inbox' ? 'From' : 'To')}: ${who(m)}`, body(m), '', `${fmtDate(m.ts)} ${fmtTime(m.ts)}`];
   },
   onEnter: ({ id }) => {
     const m = findMessage(id);

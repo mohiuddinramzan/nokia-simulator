@@ -1,4 +1,5 @@
 import { getSettings } from './storage.js';
+import { t, isBengali } from './i18n.js';
 
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -8,11 +9,11 @@ export const pad = (n) => String(n).padStart(2, '0');
 export const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => ESCAPES[c]);
 
 export const titleHtml = (title, right = '') =>
-  `<div class="title"><span>${escapeHtml(title)}</span><span>${escapeHtml(right)}</span></div>`;
+  `<div class="title"><span>${escapeHtml(t(title))}</span><span>${escapeHtml(right)}</span></div>`;
 
 export function fmtDate(ts) {
   const d = new Date(ts);
-  return `${pad(d.getDate())} ${MONTHS[d.getMonth()]}`;
+  return `${pad(d.getDate())} ${t(MONTHS[d.getMonth()])}`;
 }
 
 export function fmtTime(ts) {
@@ -30,7 +31,7 @@ export function fmtHM(hm) {
 
 export const fmtDuration = (sec) => `${pad(Math.floor(sec / 60))}:${pad(sec % 60)}`;
 
-export function wrapLines(text, width = 19) {
+export function wrapLines(text, width = isBengali() ? 14 : 19) {
   const lines = [];
   String(text).split('\n').forEach((paragraph) => {
     let line = '';
@@ -86,7 +87,7 @@ export function listHtml(labels, list, numbered = true) {
   const total = labels.length;
   const rows = labels.slice(offset, offset + visible).map((label, i) => {
     const n = offset + i;
-    return `<li class="${n === index ? 'sel' : ''}">${numbered ? `${n + 1}. ` : ''}${escapeHtml(label)}</li>`;
+    return `<li class="${n === index ? 'sel' : ''}">${numbered ? `${n + 1}. ` : ''}${escapeHtml(t(label))}</li>`;
   }).join('');
   const thumb = `top:${(offset / total) * 100}%;height:${(Math.min(visible, total) / total) * 100}%`;
   return `<div class="listwrap"><ul class="list">${rows}</ul><div class="scroll"><i style="${thumb}"></i></div></div>`;

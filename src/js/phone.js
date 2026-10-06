@@ -5,7 +5,9 @@ const RetroPhone = registerPlugin('RetroPhone');
 const PERMISSIONS = ['call', 'sendSms'];
 
 export const isNative = () => Capacitor.isNativePlatform();
-export const isReal = () => isNative() && Boolean(getSettings().realMode);
+export const REAL_AVAILABLE = typeof __VARIANT__ === 'undefined' || __VARIANT__ !== 'lite';
+
+export const isReal = () => REAL_AVAILABLE && isNative() && Boolean(getSettings().realMode);
 
 export const realCall = (number) => RetroPhone.call({ number });
 export const realSms = (number, body) => RetroPhone.sendSms({ number, body });

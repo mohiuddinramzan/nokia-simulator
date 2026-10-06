@@ -2,6 +2,7 @@ import { render, back, navigate } from './router.js';
 import { titleHtml } from './navigation.js';
 import { getHighScore, submitScore } from './storage.js';
 import { effect } from './sound.js';
+import { t } from './i18n.js';
 
 const COLS = 24;
 const ROWS = 8;
@@ -17,8 +18,8 @@ export const gamesParams = () => ({
   items: () => {
     const best = getHighScore('reaction');
     return [
-      { label: `Snake (Hi ${getHighScore('snake')})`, keep: true, run: () => navigate('snake') },
-      { label: best ? `Reaction (${best}ms)` : 'Reaction', keep: true, run: () => navigate('reaction') },
+      { label: t('Snake (Hi {n})', { n: getHighScore('snake') }), keep: true, run: () => navigate('snake') },
+      { label: best ? t('Reaction ({n}ms)', { n: best }) : t('Reaction'), keep: true, run: () => navigate('reaction') },
     ];
   },
 });
@@ -102,12 +103,12 @@ export const snakeScreen = {
   render(p) {
     const best = Math.max(getHighScore('snake'), p.score);
     const message = p.state === 'over'
-      ? `Game over<br>Score ${p.score}${p.newBest ? '<br>New best!' : ''}`
-      : SNAKE_MESSAGES[p.state];
+      ? `${t('Game over')}<br>${t('Score {n}', { n: p.score })}${p.newBest ? `<br>${t('New best!')}` : ''}`
+      : t(SNAKE_MESSAGES[p.state] || '');
     const food = p.food ? `<rect x="${p.food.x + 0.2}" y="${p.food.y + 0.2}" width="0.6" height="0.6" fill="none" stroke="currentColor" stroke-width="0.25"/>` : '';
     const svg = `<svg viewBox="-0.15 -0.15 ${COLS + 0.3} ${ROWS + 0.3}" fill="currentColor" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet"><rect x="0" y="0" width="${COLS}" height="${ROWS}" fill="none" stroke="currentColor" stroke-width="0.14"/>${p.snake.map(cell).join('')}${food}</svg>`;
     return {
-      body: `${titleHtml('Snake', `${p.score} Hi${best}`)}<div class="field">${svg}${message ? `<div class="field-msg">${message}</div>` : ''}</div>`,
+      body: `${titleHtml('Snake', `${p.score} ${t('Hi')}${best}`)}<div class="field">${svg}${message ? `<div class="field-msg">${message}</div>` : ''}</div>`,
       left: SNAKE_LABELS[p.state],
       right: 'Back',
     };
@@ -186,12 +187,12 @@ const REACTION_LABELS = { ready: 'Start', wait: 'Hit', go: 'Hit', early: 'Retry'
 function reactionText(p) {
   const best = getHighScore('reaction');
   switch (p.state) {
-    case 'wait': return 'Wait...';
-    case 'go': return 'PRESS NOW!';
-    case 'early': return 'Too soon!<br>OK to retry';
-    case 'result': return `${p.last} ms<br>OK for next`;
-    case 'final': return `Average ${p.avg} ms<br>${p.newBest ? 'New best!' : `Best ${best} ms`}`;
-    default: return `5 rounds<br>OK to start${best ? `<br>Best ${best} ms` : ''}`;
+    case 'wait': return t('Wait...');
+    case 'go': return t('PRESS NOW!');
+    case 'early': return `${t('Too soon!')}<br>${t('OK to retry')}`;
+    case 'result': return `${p.last} ms<br>${t('OK for next')}`;
+    case 'final': return `${t('Average {n} ms', { n: p.avg })}<br>${p.newBest ? t('New best!') : t('Best {n} ms', { n: best })}`;
+    default: return `${t('5 rounds')}<br>${t('OK to start')}${best ? `<br>${t('Best {n} ms', { n: best })}` : ''}`;
   }
 }
 

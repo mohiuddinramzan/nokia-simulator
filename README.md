@@ -11,6 +11,7 @@ A classic feature phone on your Android screen. Green monochrome display, a real
 - **Calls**: dial a number, see the calling screen, try incoming and missed calls, browse the call log
 - **Games**: Snake and a Reaction test, both with saved high scores
 - **Tools**: Calculator, Clock with stopwatch and countdown timer, Alarm, Calendar
+- **Two languages**: English and Bengali (বাংলা), including Bengali typing on the keypad. Menu, Settings, Language
 - **Settings**: 3 colour themes (Classic Green, Monochrome, Dark Retro), sound and vibration, 12 or 24 hour time, Profiles (General, Silent, Vibrate only)
 - **Remembers everything**: contacts, messages, call log, alarms, settings and high scores stay after you close the app
 
@@ -18,7 +19,7 @@ By default calls and messages are simulations: nothing is sent and no permission
 
 ## Real calls and SMS
 
-Menu, Settings, **Real mode**, then confirm. Android asks for permission to make calls and send SMS.
+Only in the **-real.apk** file. Menu, Settings, **Real mode**, then confirm. Android asks for permission to make calls and send SMS.
 
 - Calls: dialling a number places a real phone call using your SIM. The normal phone call screen opens.
 - SMS: messages you send go out as real text messages. Your carrier's SMS charges apply.
@@ -31,8 +32,13 @@ Real mode works inside the app only. The app does not read your existing texts, 
 
 ## Download and install (Android)
 
+Each release has two files. Pick one:
+
+- **`...-lite.apk`**: the phone simulator only. Recommended. It asks for no call or SMS permission and installs on every phone.
+- **`...-real.apk`**: the same app, and it can also place real calls and send real SMS. Google Play Protect may block this one.
+
 1. Open the [latest release](../../releases/latest) in your phone browser.
-2. Under **Assets**, tap the file ending in **.apk** to download it.
+2. Under **Assets**, tap the file ending in **-lite.apk** to download it.
 3. Open the downloaded file. If Android says installing from this source is blocked, tap **Settings**, allow it for your browser or file manager, then go back and tap **Install**.
 4. If Play Protect shows a warning, tap **More details** and then **Install anyway**. The app is not on the Play Store, which is why the warning appears.
 5. Open **Retro Phone Simulator** from your app list.
@@ -42,7 +48,7 @@ To update, download the newest APK and install it over the old one. Your data st
 ### বাংলায় ইনস্টল
 
 1. ফোনের ব্রাউজারে [সর্বশেষ release](../../releases/latest) খুলুন।
-2. **Assets**-এর নিচে **.apk** দিয়ে শেষ হওয়া ফাইলে ট্যাপ করে ডাউনলোড করুন।
+2. **Assets**-এর নিচে **-lite.apk** দিয়ে শেষ হওয়া ফাইলে ট্যাপ করে ডাউনলোড করুন। (আসল কল ও এসএমএস চাইলে **-real.apk**, তবে Play Protect আটকাতে পারে।)
 3. ডাউনলোড হওয়া ফাইল খুলুন। Android বাধা দিলে **Settings** চেপে ব্রাউজার বা ফাইল ম্যানেজারের জন্য অনুমতি দিন, তারপর **Install** চাপুন।
 4. Play Protect সতর্কতা দিলে **More details** চেপে **Install anyway** দিন।
 5. অ্যাপ লিস্ট থেকে **Retro Phone Simulator** খুলুন।
@@ -66,7 +72,6 @@ Press any number on the home screen to start dialling. Press the left soft key (
 ## Good to know
 
 - Alarms and the timer ring only while the app is open. Android pauses apps in the background.
-- English only for now.
 - Incoming real calls and SMS are not shown yet.
 - To erase everything: Menu, Settings, **Reset app**.
 - Privacy: the app does not collect or send any data. Everything stays on your phone. In Real mode the app only uses the call and send SMS permissions you allow.

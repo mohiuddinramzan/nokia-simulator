@@ -43,7 +43,8 @@ Do not run `npx cap add android`, `npx cap sync android` or `./gradlew` in Termu
 2. `npx cap add android` (the `android/` folder is generated in CI)
 3. `scripts/patch-android.mjs` adds the VIBRATE permission, portrait lock and icons
 4. `npx cap sync android`, then `./gradlew assembleDebug`
-5. The APK is renamed `retro-phone-simulator-vX.Y.Z.apk`, uploaded as an artifact, and published to a GitHub Release
+5. Two builds run in parallel: `lite` (no call or SMS permission, no native plugin) and `real` (with the native plugin). The web build gets `APP_VARIANT` so the Real mode menu is hidden in lite
+6. The APKs are named `retro-phone-simulator-vX.Y.Z-lite.apk` and `-real.apk`, uploaded as artifacts and published to a GitHub Release
 
 The release tag comes from the `version` in `package.json` (for example `v1.0.0`), or from the tag name when you push a tag. If the release already exists, its APK is replaced.
 
@@ -56,6 +57,10 @@ git push
 ```
 
 This creates release `v1.1.0` with the new APK. Pull requests only build; they do not publish.
+
+## Languages
+
+`src/js/i18n.js` holds the Bengali dictionary. Screens call `t('English text')`; the title, list, soft key and toast helpers translate automatically. Add a string to the dictionary to translate it. Bengali multi-tap typing is in `src/js/multitap.js`.
 
 ## Native plugin (real calls and SMS)
 

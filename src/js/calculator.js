@@ -1,5 +1,6 @@
 import { render, back } from './router.js';
 import { titleHtml, escapeHtml } from './navigation.js';
+import { t } from './i18n.js';
 
 const MAX_DIGITS = 12;
 const KEY_OP = { up: '+', down: '-', left: '×', right: '÷' };
@@ -76,7 +77,7 @@ export const calculatorScreen = {
   render(p) {
     const expr = p.op ? `${fmt(p.acc)} ${p.op}` : '';
     return {
-      body: `${titleHtml('Calculator')}<div class="calc"><div class="calc-expr">${escapeHtml(expr)}&nbsp;</div><div class="calc-val">${escapeHtml(p.cur)}</div><div class="calc-hint">↑+ ↓- ←× →÷ *% #. OK=</div></div>`,
+      body: `${titleHtml('Calculator')}<div class="calc"><div class="calc-expr">${escapeHtml(expr)}&nbsp;</div><div class="calc-val">${escapeHtml(p.cur === 'Error' ? t('Error') : p.cur)}</div><div class="calc-hint">↑+ ↓- ←× →÷ *% #. OK=</div></div>`,
       left: 'Clear',
       right: 'Back',
     };

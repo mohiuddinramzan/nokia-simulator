@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync, cpSync, readdirSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
+const variant = process.argv[2] === 'lite' ? 'lite' : 'real';
 const main = 'android/app/src/main';
 const manifestPath = join(main, 'AndroidManifest.xml');
 
@@ -10,12 +11,12 @@ if (!existsSync(manifestPath)) {
 }
 
 let manifest = readFileSync(manifestPath, 'utf8');
-const permissions = ['VIBRATE', 'CALL_PHONE', 'SEND_SMS'];
+const permissions = variant === 'lite' ? ['VIBRATE'] : ['VIBRATE', 'CALL_PHONE', 'SEND_SMS'];
 permissions.forEach((name) => {
   if (manifest.includes(`android.permission.${name}"`)) return;
   manifest = manifest.replace('</manifest>', `    <uses-permission android:name="android.permission.${name}" />\n</manifest>`);
 });
-if (!manifest.includes('android.hardware.telephony')) {
+if (variant === 'real' && !manifest.includes('android.hardware.telephony')) {
   manifest = manifest.replace('</manifest>', '    <uses-feature android:name="android.hardware.telephony" android:required="false" />\n</manifest>');
 }
 if (!manifest.includes('android:screenOrientation')) {
@@ -39,12 +40,14 @@ if (existsSync('resources/android')) {
     });
   });
 }
-const appId = JSON.parse(readFileSync('capacitor.config.json', 'utf8')).appId;
-const javaDir = join(main, 'java', ...appId.split('.'));
-mkdirSync(javaDir, { recursive: true });
-readdirSync('resources/android-native').forEach((file) => {
-  const code = readFileSync(join('resources/android-native', file), 'utf8').replaceAll('__PACKAGE__', appId);
-  writeFileSync(join(javaDir, file), code);
-});
+if (variant === 'real') {
+  const appId = JSON.parse(readFileSync('capacitor.config.json', 'utf8')).appId;
+  const javaDir = join(main, 'java', ...appId.split('.'));
+  mkdirSync(javaDir, { recursive: true });
+  readdirSync('resources/android-native').forEach((file) => {
+    const code = readFileSync(join('resources/android-native', file), 'utf8').replaceAll('__PACKAGE__', appId);
+    writeFileSync(join(javaDir, file), code);
+  });
+}
 
-console.log(`Android project patched (${copied} icons replaced).`);
+console.log(`Android project patched (${variant}, ${copied} icons replaced).`);

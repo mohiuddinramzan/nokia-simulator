@@ -3,6 +3,7 @@ import { load, addItem, updateItem, removeItem, getSettings } from './storage.js
 import { makeListScreen, openOptions, openEditor } from './screens.js';
 import { escapeHtml, fmtHM, pad } from './navigation.js';
 import { beep } from './sound.js';
+import { t } from './i18n.js';
 import { timerDue } from './clock.js';
 
 const SNOOZE_MS = 5 * 60 * 1000;
@@ -43,7 +44,7 @@ const toggleAlarm = (a) => updateItem('alarms', a.id, { enabled: !a.enabled });
 export const alarmScreen = makeListScreen({
   title: 'Alarm',
   items: () => load('alarms').filter((a) => typeof a.time === 'string').sort((a, b) => a.time.localeCompare(b.time)),
-  label: (a) => `${fmtHM(a.time)} ${a.enabled ? 'ON' : 'off'}`,
+  label: (a) => `${fmtHM(a.time)} ${t(a.enabled ? 'ON' : 'off')}`,
   empty: 'No alarms',
   emptyLeft: { label: 'Add', run: addAlarm },
   onOk: toggleAlarm,
@@ -85,7 +86,7 @@ export const ringScreen = {
 
   render(p) {
     return {
-      body: `<div class="call"><div class="call-status">${escapeHtml(p.title)}</div><div class="call-num big">${escapeHtml(p.text)}</div></div>`,
+      body: `<div class="call"><div class="call-status">${escapeHtml(t(p.title))}</div><div class="call-num big">${escapeHtml(t(p.text))}</div></div>`,
       left: 'Stop',
       right: p.snooze ? 'Snooze' : '',
     };

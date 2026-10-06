@@ -1,6 +1,9 @@
 import { navigate, back, render } from './router.js';
 import { createList, listHtml, titleHtml, escapeHtml, wrapLines } from './navigation.js';
 import { createTyper } from './multitap.js';
+import { t } from './i18n.js';
+
+const VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev';
 
 const resolve = (value, params) => (typeof value === 'function' ? value(params) : value);
 
@@ -28,7 +31,7 @@ export const stubScreen = {
 export const aboutScreen = {
   render() {
     return {
-      body: `${titleHtml('About')}<div class="note about">Retro Phone Simulator<br>Version 1.0.0<br>Original retro design</div>`,
+      body: `${titleHtml('About')}<div class="note about">${t('Retro Phone Simulator')}<br>${t('Version {v}', { v: VERSION })}<br>${t('Original retro design')}</div>`,
       left: '',
       right: 'Back',
     };
@@ -74,7 +77,7 @@ export const optionsScreen = {
 export const confirmScreen = {
   render({ title, text }) {
     return {
-      body: `${titleHtml(title)}<div class="note">${escapeHtml(text)}</div>`,
+      body: `${titleHtml(title)}<div class="note">${escapeHtml(t(text))}</div>`,
       left: 'Yes',
       right: 'No',
     };
@@ -145,7 +148,7 @@ export function makeListScreen({ title, items, label, empty = 'Empty', left = 'O
       const heading = resolve(title, params);
       if (!all.length) {
         return {
-          body: `${titleHtml(heading)}<div class="note">${escapeHtml(empty)}</div>`,
+          body: `${titleHtml(heading)}<div class="note">${escapeHtml(t(empty))}</div>`,
           left: emptyLeft ? emptyLeft.label : '',
           right: 'Back',
         };

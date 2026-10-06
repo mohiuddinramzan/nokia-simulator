@@ -273,3 +273,6 @@
   border-radius: 50%;
   background: linear-gradient(currentColor, currentColor) 50% 15% / 1px 40% no-repeat;
 }
+
+[lang="bn"] .lcd { line-height: 1.25; }
+[lang="bn"] .ln { height: 1.25em; }

@@ -1,5 +1,6 @@
 import { render, navigate } from './router.js';
 import { getSettings } from './storage.js';
+import { t } from './i18n.js';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -31,7 +32,7 @@ export const homeScreen = {
     const { time, suffix } = clockParts(d);
     const small = suffix ? `<small>${suffix}</small>` : '';
     return {
-      body: `<div class="home"><div class="home-time">${time}${small}</div><div class="home-day">${DAYS[d.getDay()]}</div><div class="home-date">${pad(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()}</div></div>`,
+      body: `<div class="home"><div class="home-time">${time}${small}</div><div class="home-day">${t(DAYS[d.getDay()])}</div><div class="home-date">${pad(d.getDate())} ${t(MONTHS[d.getMonth()])} ${d.getFullYear()}</div></div>`,
       left: 'Menu',
       right: 'Names',
     };

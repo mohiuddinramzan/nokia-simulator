@@ -1,6 +1,7 @@
 import { render, back, navigate } from './router.js';
 import { titleHtml, escapeHtml, pad, DAYS, MONTHS } from './navigation.js';
 import { getSettings } from './storage.js';
+import { t } from './i18n.js';
 
 const sw = { running: false, startedAt: 0, base: 0 };
 const timer = { total: 60000, state: 'idle', endAt: 0, remaining: 0 };
@@ -51,7 +52,7 @@ export const clockFaceScreen = {
     const h = twelve ? d.getHours() % 12 || 12 : pad(d.getHours());
     const suffix = twelve ? (d.getHours() < 12 ? 'AM' : 'PM') : '';
     return {
-      body: `<div class="home"><div class="home-time">${h}:${pad(d.getMinutes())}<small>:${pad(d.getSeconds())} ${suffix}</small></div><div class="home-day">${DAYS[d.getDay()]}</div><div class="home-date">${pad(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()}</div></div>`,
+      body: `<div class="home"><div class="home-time">${h}:${pad(d.getMinutes())}<small>:${pad(d.getSeconds())} ${suffix}</small></div><div class="home-day">${t(DAYS[d.getDay()])}</div><div class="home-date">${pad(d.getDate())} ${t(MONTHS[d.getMonth()])} ${d.getFullYear()}</div></div>`,
       left: '',
       right: 'Back',
     };
@@ -130,7 +131,7 @@ export const timerScreen = {
   render() {
     const idle = timer.state === 'idle';
     return {
-      body: `${titleHtml('Timer')}<div class="call"><div class="call-num big">${fmtCountdown(timerLeft())}</div>${idle ? '<div class="calc-hint">↑↓ 1 min  ←→ 10 s</div>' : ''}</div>`,
+      body: `${titleHtml('Timer')}<div class="call"><div class="call-num big">${fmtCountdown(timerLeft())}</div>${idle ? `<div class="calc-hint">${t('↑↓ 1 min  ←→ 10 s')}</div>` : ''}</div>`,
       left: timer.state === 'running' ? 'Pause' : 'Start',
       right: idle ? 'Back' : 'Reset',
     };

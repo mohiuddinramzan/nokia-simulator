@@ -2,7 +2,8 @@ import { navigate, home, notify, render } from './router.js';
 import { getSettings, setSetting, resetAll } from './storage.js';
 import { confirmAction, makeInfoScreen } from './screens.js';
 import { effect } from './sound.js';
-import { isNative, requestPhonePermissions, phoneStatus, noteError, getLastError } from './phone.js';
+import { t } from './i18n.js';
+import { REAL_AVAILABLE, isNative, requestPhonePermissions, phoneStatus, noteError, getLastError } from './phone.js';
 
 const THEMES = [['classic', 'Classic Green'], ['mono', 'Monochrome'], ['dark', 'Dark Retro']];
 const PROFILES = [
@@ -11,13 +12,14 @@ const PROFILES = [
   ['Vibrate only', { sound: false, vibration: true }],
 ];
 
-const onOff = (value) => (value ? 'ON' : 'OFF');
+const onOff = (value) => t(value ? 'ON' : 'OFF');
 const mark = (active) => (active ? '* ' : '  ');
 
 export function applySettings() {
-  const { theme, glow, grid } = getSettings();
+  const { theme, glow, grid, language } = getSettings();
   const root = document.documentElement;
   root.dataset.theme = theme;
+  root.lang = language === 'bn' ? 'bn' : 'en';
   root.dataset.glow = glow ? 'on' : 'off';
   root.dataset.grid = grid ? 'on' : 'off';
 }
@@ -31,8 +33,8 @@ async function enableReal() {
   setSetting('realMode', true);
   try {
     const p = await requestPhonePermissions();
-    const ok = (name) => (p[name] === 'granted' ? 'OK' : 'no');
-    notify(`Call ${ok('call')} SMS ${ok('sendSms')}`);
+    const ok = (name) => t(p[name] === 'granted' ? 'OK' : 'no');
+    notify(t('Call {c} SMS {s}', { c: ok('call'), s: ok('sendSms') }));
   } catch (err) {
     console.error('[settings] permission request failed', err);
     noteError(err);
@@ -85,8 +87,8 @@ const displayParams = () => ({
   items: () => {
     const { grid, glow } = getSettings();
     return [
-      { label: `Pixel grid: ${onOff(grid)}`, keep: true, run: () => toggle('grid') },
-      { label: `Screen glow: ${onOff(glow)}`, keep: true, run: () => toggle('glow') },
+      { label: t('Pixel grid: {v}', { v: onOff(grid) }), keep: true, run: () => toggle('grid') },
+      { label: t('Screen glow: {v}', { v: onOff(glow) }), keep: true, run: () => toggle('glow') },
     ];
   },
 });
@@ -94,7 +96,7 @@ const displayParams = () => ({
 const themeParams = () => ({
   title: 'Theme',
   items: () => THEMES.map(([id, name]) => ({
-    label: `${mark(getSettings().theme === id)}${name}`,
+    label: `${mark(getSettings().theme === id)}${t(name)}`,
     keep: true,
     run: () => {
       setSetting('theme', id);
@@ -103,9 +105,18 @@ const themeParams = () => ({
   })),
 });
 
+const LANGUAGES = [['en', 'English'], ['bn', 'বাংলা']];
+
 const languageParams = () => ({
   title: 'Language',
-  items: [{ label: '* English', keep: true, run: () => notify('More languages later') }],
+  items: () => LANGUAGES.map(([id, name]) => ({
+    label: `${mark(getSettings().language === id)}${name}`,
+    keep: true,
+    run: () => {
+      setSetting('language', id);
+      applySettings();
+    },
+  })),
 });
 
 export const settingsParams = () => ({
@@ -113,12 +124,14 @@ export const settingsParams = () => ({
   items: () => {
     const { sound, vibration, timeFormat, realMode } = getSettings();
     return [
-      { label: `Real mode: ${onOff(realMode)}`, keep: true, run: toggleReal },
-      { label: 'Phone status', keep: true, run: () => navigate('phonestatus') },
+      ...(REAL_AVAILABLE ? [
+        { label: t('Real mode: {v}', { v: onOff(realMode) }), keep: true, run: toggleReal },
+        { label: 'Phone status', keep: true, run: () => navigate('phonestatus') },
+      ] : []),
       { label: 'Display', keep: true, run: openParams(displayParams) },
       { label: 'Theme', keep: true, run: openParams(themeParams) },
       {
-        label: `Sound: ${onOff(sound)}`,
+        label: t('Sound: {v}', { v: onOff(sound) }),
         keep: true,
         run: () => {
           toggle('sound');
@@ -126,7 +139,7 @@ export const settingsParams = () => ({
         },
       },
       {
-        label: `Vibration: ${onOff(vibration)}`,
+        label: t('Vibration: {v}', { v: onOff(vibration) }),
         keep: true,
         run: () => {
           toggle('vibration');
@@ -134,7 +147,7 @@ export const settingsParams = () => ({
         },
       },
       {
-        label: `Time format: ${timeFormat}h`,
+        label: t('Time format: {v}', { v: `${timeFormat}h` }),
         keep: true,
         run: () => setSetting('timeFormat', timeFormat === '24' ? '12' : '24'),
       },
@@ -158,11 +171,11 @@ export const profilesParams = () => ({
   items: () => {
     const { sound, vibration } = getSettings();
     return PROFILES.map(([name, values]) => ({
-      label: `${mark(values.sound === sound && values.vibration === vibration)}${name}`,
+      label: `${mark(values.sound === sound && values.vibration === vibration)}${t(name)}`,
       run: () => {
         setSetting('sound', values.sound);
         setSetting('vibration', values.vibration);
-        notify(`${name} on`);
+        notify(t('{name} on', { name: t(name) }));
       },
     }));
   },

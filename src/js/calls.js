@@ -3,6 +3,7 @@ import { addItem, updateItem, removeItem, save, load, contactName, randomCaller,
 import { makeListScreen, makeInfoScreen, openOptions, confirmAction } from './screens.js';
 import { escapeHtml, fmtDate, fmtTime, fmtDuration } from './navigation.js';
 import { beep } from './sound.js';
+import { t } from './i18n.js';
 import { compose } from './messages.js';
 import { isReal, realCall, noteError } from './phone.js';
 
@@ -80,7 +81,7 @@ export const callingScreen = {
     const dots = p.tick % 4;
     const status = p.connected
       ? fmtDuration(p.seconds)
-      : `Calling${'.'.repeat(dots)}<span class="ghost">${'.'.repeat(3 - dots)}</span>`;
+      : `${t('Calling')}${'.'.repeat(dots)}<span class="ghost">${'.'.repeat(3 - dots)}</span>`;
     return { body: callView(status, p.number), left: '', right: p.connected ? 'End' : 'Cancel' };
   },
 
@@ -119,7 +120,7 @@ export const incomingScreen = {
   },
 
   render(p) {
-    return { body: callView('Incoming Call', p.number), left: 'Accept', right: 'Reject' };
+    return { body: callView(t('Incoming Call'), p.number), left: 'Accept', right: 'Reject' };
   },
 
   key(key, p) {
@@ -199,9 +200,9 @@ export const logDetailScreen = makeInfoScreen({
   title: ({ id }) => TYPE_NAMES[(findLog(id) || {}).type] || 'Call',
   lines: ({ id }) => {
     const l = findLog(id);
-    if (!l) return ['Not found'];
+    if (!l) return [t('Not found')];
     const name = contactName(l.number);
-    return [name, l.number, `${fmtDate(l.ts)} ${fmtTime(l.ts)}`, l.duration ? `Time ${fmtDuration(l.duration)}` : ''].filter(Boolean);
+    return [name, l.number, `${fmtDate(l.ts)} ${fmtTime(l.ts)}`, l.duration ? t('Time {t}', { t: fmtDuration(l.duration) }) : ''].filter(Boolean);
   },
   onLeft: ({ id }) => {
     const l = findLog(id);

@@ -3,6 +3,7 @@ import { navigate, back, notify } from './router.js';
 import { makeListScreen, makeInfoScreen, openOptions, openEditor, confirmAction } from './screens.js';
 import { startCall } from './calls.js';
 import { compose } from './messages.js';
+import { t } from './i18n.js';
 
 const clean = (c) => ({ ...c, name: String(c.name || ''), number: String(c.number || '') });
 const sortedContacts = () => load('contacts').map(clean).sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
@@ -37,7 +38,7 @@ function contactActions(c, fromView) {
     { label: 'Edit', run: () => editContact(c) },
     {
       label: 'Delete',
-      run: () => confirmAction('Delete', `Delete ${c.name}?`, () => {
+      run: () => confirmAction('Delete', t('Delete {name}?', { name: c.name }), () => {
         removeItem('contacts', c.id);
         if (fromView) back();
       }),
@@ -76,7 +77,7 @@ export const contactScreen = makeInfoScreen({
   title: 'Contact',
   lines: ({ id }) => {
     const c = findContact(id);
-    return c ? [c.name, c.number] : ['Not found'];
+    return c ? [c.name, c.number] : [t('Not found')];
   },
   onLeft: ({ id }) => {
     const c = findContact(id);

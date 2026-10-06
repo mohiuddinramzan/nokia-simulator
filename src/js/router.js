@@ -1,3 +1,5 @@
+import { t } from './i18n.js';
+
 const screens = new Map();
 let stack = [];
 let refs = null;
@@ -23,7 +25,7 @@ export function mount(elements) {
 
 export function notify(message, ms = 1400) {
   if (!refs) return;
-  refs.toast.textContent = message;
+  refs.toast.textContent = t(message);
   refs.toast.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => {
@@ -45,8 +47,8 @@ export function render() {
   try {
     const view = screenOf(entry).render(entry.params);
     refs.body.innerHTML = view.body;
-    refs.left.textContent = view.left || '';
-    refs.right.textContent = view.right || '';
+    refs.left.textContent = t(view.left || '');
+    refs.right.textContent = t(view.right || '');
     runHook();
   } catch (err) {
     console.error(`[router] render failed for "${entry.name}"`, err);
