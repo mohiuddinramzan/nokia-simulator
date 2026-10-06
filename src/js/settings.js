@@ -1,8 +1,8 @@
-import { navigate, home, notify } from './router.js';
+import { navigate, home, notify, render } from './router.js';
 import { getSettings, setSetting, resetAll } from './storage.js';
-import { confirmAction } from './screens.js';
+import { confirmAction, makeInfoScreen } from './screens.js';
 import { effect } from './sound.js';
-import { isNative, requestPhonePermissions } from './phone.js';
+import { isNative, requestPhonePermissions, phoneStatus, noteError, getLastError } from './phone.js';
 
 const THEMES = [['classic', 'Classic Green'], ['mono', 'Monochrome'], ['dark', 'Dark Retro']];
 const PROFILES = [
@@ -35,6 +35,7 @@ async function enableReal() {
     notify(`Call ${ok('call')} SMS ${ok('sendSms')}`);
   } catch (err) {
     console.error('[settings] permission request failed', err);
+    noteError(err);
     notify('Real mode on');
   }
 }
@@ -49,6 +50,34 @@ function toggleReal() {
     confirmAction('Real mode', 'Real calls and SMS may cost money. Turn on?', enableReal);
   }
 }
+
+function loadStatus(params) {
+  params.status = null;
+  phoneStatus().then((status) => {
+    params.status = status;
+    render();
+  });
+}
+
+export const phoneStatusScreen = makeInfoScreen({
+  title: 'Phone status',
+  left: 'Recheck',
+  onEnter: loadStatus,
+  onLeft: loadStatus,
+  lines: ({ status }) => {
+    if (!status) return ['Checking...'];
+    const rows = [
+      `Android app: ${status.native ? 'yes' : 'no'}`,
+      `Real mode: ${getSettings().realMode ? 'ON' : 'OFF'}`,
+      `Plugin: ${status.plugin}`,
+      `Call: ${status.call}`,
+      `SMS send: ${status.sendSms}`,
+      `SMS read: ${status.readSms}`,
+    ];
+    const error = getLastError();
+    return error ? [...rows, `Error: ${error}`] : rows;
+  },
+});
 
 const openParams = (params) => () => navigate('options', params());
 
@@ -86,6 +115,7 @@ export const settingsParams = () => ({
     const { sound, vibration, timeFormat, realMode } = getSettings();
     return [
       { label: `Real mode: ${onOff(realMode)}`, keep: true, run: toggleReal },
+      { label: 'Phone status', keep: true, run: () => navigate('phonestatus') },
       { label: 'Display', keep: true, run: openParams(displayParams) },
       { label: 'Theme', keep: true, run: openParams(themeParams) },
       {

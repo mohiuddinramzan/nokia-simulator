@@ -3,7 +3,7 @@ import { navigate, back, notify, render } from './router.js';
 import { makeListScreen, makeInfoScreen, openOptions, openEditor, confirmAction } from './screens.js';
 import { fmtDate, fmtTime } from './navigation.js';
 import { startCall } from './calls.js';
-import { isReal, realSms, readPhoneSms } from './phone.js';
+import { isReal, realSms, readPhoneSms, noteError } from './phone.js';
 
 const BOX_TITLES = { inbox: 'Inbox', sent: 'Sent', drafts: 'Drafts' };
 const SAMPLES = ['Hello! How are you?', 'Call me when you are free.', 'Meeting at 5 pm today.', 'Happy birthday!', 'Where are you? I am waiting.'];
@@ -27,6 +27,7 @@ function send(text, number, draftId) {
   notify('Sending...');
   realSms(number, text).then(() => deliver(text, number, draftId)).catch((err) => {
     console.error('[messages] real SMS failed', err);
+    noteError(err);
     saveDraft(text, number, draftId);
     notify('Send failed');
     render();
@@ -58,6 +59,7 @@ async function importFromPhone() {
     notify(`Imported ${added}`);
   } catch (err) {
     console.error('[messages] import failed', err);
+    noteError(err);
     notify('Import failed');
   }
   render();

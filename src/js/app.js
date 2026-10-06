@@ -1,7 +1,7 @@
 import { getSettings, load } from './storage.js';
 import { initKeypad } from './keypad.js';
 import { mount, registerScreen, home, handleKey, setRenderHook } from './router.js';
-import { applySettings } from './settings.js';
+import { applySettings, phoneStatusScreen } from './settings.js';
 import { initNative } from './native.js';
 import { keyTone } from './sound.js';
 import { homeScreen } from './home.js';
@@ -42,6 +42,7 @@ const SCREENS = {
   alarms: alarmScreen,
   ring: ringScreen,
   calendar: calendarScreen,
+  phonestatus: phoneStatusScreen,
 };
 
 let lastIndicators = '';

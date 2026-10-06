@@ -4,7 +4,7 @@ import { makeListScreen, makeInfoScreen, openOptions, confirmAction } from './sc
 import { escapeHtml, fmtDate, fmtTime, fmtDuration } from './navigation.js';
 import { beep } from './sound.js';
 import { compose } from './messages.js';
-import { isReal, realCall } from './phone.js';
+import { isReal, realCall, noteError } from './phone.js';
 
 const MAX_DIGITS = 15;
 const CONNECT_TICKS = 8;
@@ -28,6 +28,7 @@ export function startCall(number, replaceTop = false) {
     if (replaceTop) back();
     realCall(number).catch((err) => {
       console.error('[calls] real call failed', err);
+      noteError(err);
       notify('Call failed');
     });
     render();
