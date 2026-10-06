@@ -4,6 +4,7 @@ import { makeListScreen, makeInfoScreen, openOptions, confirmAction } from './sc
 import { escapeHtml, fmtDate, fmtTime, fmtDuration } from './navigation.js';
 import { beep } from './sound.js';
 import { compose } from './messages.js';
+import { isReal, realCall } from './phone.js';
 
 const MAX_DIGITS = 15;
 const CONNECT_TICKS = 8;
@@ -23,6 +24,15 @@ function callView(status, number) {
 export function startCall(number, replaceTop = false) {
   if (!number) return;
   const entry = logCall('dialled', number);
+  if (isReal()) {
+    if (replaceTop) back();
+    realCall(number).catch((err) => {
+      console.error('[calls] real call failed', err);
+      notify('Call failed');
+    });
+    render();
+    return;
+  }
   (replaceTop ? replace : navigate)('calling', { number, logId: entry.id, tick: 0, seconds: 0, connected: false });
 }
 
@@ -163,13 +173,15 @@ function logActions(l, fromDetail) {
 
 export const callLogParams = () => ({
   title: 'Call Log',
-  items: [
+  items: () => [
     { label: 'Missed calls', keep: true, run: () => navigate('logs', { type: 'missed' }) },
     { label: 'Received calls', keep: true, run: () => navigate('logs', { type: 'received' }) },
     { label: 'Dialled numbers', keep: true, run: () => navigate('logs', { type: 'dialled' }) },
     { label: 'Clear all', keep: true, run: () => confirmAction('Clear log', 'Delete all calls?', () => save('callLogs', [])) },
-    { label: 'Simulate incoming', keep: true, run: simulateIncoming },
-    { label: 'Simulate missed', keep: true, run: simulateMissed },
+    ...(isReal() ? [] : [
+      { label: 'Simulate incoming', keep: true, run: simulateIncoming },
+      { label: 'Simulate missed', keep: true, run: simulateMissed },
+    ]),
   ],
 });
 

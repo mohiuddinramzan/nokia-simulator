@@ -1,7 +1,7 @@
 const PREFIX = 'rps:';
 
 export const DEFAULTS = {
-  settings: { theme: 'classic', sound: true, vibration: true, timeFormat: '24', language: 'en', glow: true, grid: true },
+  settings: { theme: 'classic', sound: true, vibration: true, timeFormat: '24', language: 'en', glow: true, grid: true, realMode: false },
   contacts: [],
   messages: [],
   callLogs: [],

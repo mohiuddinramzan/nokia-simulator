@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync, cpSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, cpSync, readdirSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const main = 'android/app/src/main';
@@ -10,8 +10,13 @@ if (!existsSync(manifestPath)) {
 }
 
 let manifest = readFileSync(manifestPath, 'utf8');
-if (!manifest.includes('android.permission.VIBRATE')) {
-  manifest = manifest.replace('</manifest>', '    <uses-permission android:name="android.permission.VIBRATE" />\n</manifest>');
+const permissions = ['VIBRATE', 'CALL_PHONE', 'SEND_SMS', 'READ_SMS'];
+permissions.forEach((name) => {
+  if (manifest.includes(`android.permission.${name}"`)) return;
+  manifest = manifest.replace('</manifest>', `    <uses-permission android:name="android.permission.${name}" />\n</manifest>`);
+});
+if (!manifest.includes('android.hardware.telephony')) {
+  manifest = manifest.replace('</manifest>', '    <uses-feature android:name="android.hardware.telephony" android:required="false" />\n</manifest>');
 }
 if (!manifest.includes('android:screenOrientation')) {
   manifest = manifest.replace('android:name=".MainActivity"', 'android:name=".MainActivity"\n            android:screenOrientation="portrait"');
@@ -34,4 +39,12 @@ if (existsSync('resources/android')) {
     });
   });
 }
+const appId = JSON.parse(readFileSync('capacitor.config.json', 'utf8')).appId;
+const javaDir = join(main, 'java', ...appId.split('.'));
+mkdirSync(javaDir, { recursive: true });
+readdirSync('resources/android-native').forEach((file) => {
+  const code = readFileSync(join('resources/android-native', file), 'utf8').replaceAll('__PACKAGE__', appId);
+  writeFileSync(join(javaDir, file), code);
+});
+
 console.log(`Android project patched (${copied} icons replaced).`);

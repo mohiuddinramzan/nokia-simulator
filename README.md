@@ -14,7 +14,21 @@ A classic feature phone on your Android screen. Green monochrome display, a real
 - **Settings**: 3 colour themes (Classic Green, Monochrome, Dark Retro), sound and vibration, 12 or 24 hour time, Profiles (General, Silent, Vibrate only)
 - **Remembers everything**: contacts, messages, call log, alarms, settings and high scores stay after you close the app
 
-Calls and messages are simulations. The app never calls or texts anyone and never asks for your real contacts.
+By default calls and messages are simulations: nothing is sent and no permission is needed. Turn on **Real mode** to place real calls and send real SMS (see below).
+
+## Real calls and SMS
+
+Menu, Settings, **Real mode**, then confirm. Android asks for permission to make calls and send SMS.
+
+- Calls: dialling a number places a real phone call using your SIM. The normal phone call screen opens.
+- SMS: messages you send go out as real text messages. Your carrier's SMS charges apply.
+- **Import from phone** (Menu, Messages) copies your latest 50 received and 50 sent texts into the app.
+- If a permission is denied, calls open the phone dialer instead and sending shows "Send failed" and keeps the text in Drafts.
+- Turn Real mode off at any time to go back to the simulation.
+
+**If Android will not show the SMS permission** (Android 13 and newer, apps installed from a file): open Android Settings, Apps, Retro Phone Simulator, tap the three dots at the top right and choose **Allow restricted settings**. Then turn Real mode on again.
+
+Real mode works inside the app only. Incoming real calls and texts are not shown yet.
 
 ## Download and install (Android)
 
@@ -54,8 +68,9 @@ Press any number on the home screen to start dialling. Press the left soft key (
 
 - Alarms and the timer ring only while the app is open. Android pauses apps in the background.
 - English only for now.
+- Incoming real calls and SMS are not shown yet.
 - To erase everything: Menu, Settings, **Reset app**.
-- Privacy: the app does not collect or send any data. Everything stays on your phone.
+- Privacy: the app does not collect or send any data. Everything stays on your phone. In Real mode the app only uses the call, send SMS and read SMS permissions you allow.
 
 ## For developers
 

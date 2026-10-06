@@ -2,6 +2,7 @@ import { navigate, home, notify } from './router.js';
 import { getSettings, setSetting, resetAll } from './storage.js';
 import { confirmAction } from './screens.js';
 import { effect } from './sound.js';
+import { isNative, requestPhonePermissions } from './phone.js';
 
 const THEMES = [['classic', 'Classic Green'], ['mono', 'Monochrome'], ['dark', 'Dark Retro']];
 const PROFILES = [
@@ -24,6 +25,29 @@ export function applySettings() {
 function toggle(name) {
   setSetting(name, !getSettings()[name]);
   applySettings();
+}
+
+async function enableReal() {
+  setSetting('realMode', true);
+  try {
+    const p = await requestPhonePermissions();
+    const ok = (name) => (p[name] === 'granted' ? 'OK' : 'no');
+    notify(`Call ${ok('call')} SMS ${ok('sendSms')}`);
+  } catch (err) {
+    console.error('[settings] permission request failed', err);
+    notify('Real mode on');
+  }
+}
+
+function toggleReal() {
+  if (getSettings().realMode) {
+    setSetting('realMode', false);
+    notify('Simulation mode');
+  } else if (!isNative()) {
+    notify('Android app only');
+  } else {
+    confirmAction('Real mode', 'Real calls and SMS may cost money. Turn on?', enableReal);
+  }
 }
 
 const openParams = (params) => () => navigate('options', params());
@@ -59,8 +83,9 @@ const languageParams = () => ({
 export const settingsParams = () => ({
   title: 'Settings',
   items: () => {
-    const { sound, vibration, timeFormat } = getSettings();
+    const { sound, vibration, timeFormat, realMode } = getSettings();
     return [
+      { label: `Real mode: ${onOff(realMode)}`, keep: true, run: toggleReal },
       { label: 'Display', keep: true, run: openParams(displayParams) },
       { label: 'Theme', keep: true, run: openParams(themeParams) },
       {
